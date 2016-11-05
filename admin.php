@@ -1,11 +1,15 @@
 <?php
 $admin = new Admin( isset($_POST['pass']) ? $_POST['pass'] : false );
 
+if ( 'unmount' == $_POST['action'] ) {
+    $message = "USB Stick unmounted.";
+    $admin->unmount();
+}
 include( 'form-admin.php' );
 
 
 class Admin {
-    private $config = null;
+    public $config = null;
 
     function __construct( $password ) {
         $this->get_config();
@@ -19,9 +23,11 @@ class Admin {
                     'ssid' => $_POST['ssid'], //Needs to be sanitized somehow
                 );
                 $this->save_config();
+                $this->set_ssid( $this->config['ssid'] );
                 header("Location: http:/setup-complete.html");
                 die();
             } else {
+                //Todo: Add errors for no password or passwords don't match
                 include( 'form-setup.php' );
                 die();
             }
@@ -68,5 +74,13 @@ class Admin {
         } else {
             return null;
         }
+    }
+
+    function unmount() {
+        exec('./unmount-usb.sh');
+    }
+
+    function set_ssid( $ssid ) {
+        exec('./set-ssid.sh ' . $ssid);
     }
 }
