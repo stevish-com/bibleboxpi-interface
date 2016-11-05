@@ -1,29 +1,46 @@
 <?php
+//Authenticate and load config first.
 $admin = new Admin( isset($_POST['pass']) ? $_POST['pass'] : false );
+$message = '';
 
-if ( 'unmount' == $_POST['action'] ) {
-    $message = "USB Stick unmounted.";
-    $admin->unmount();
+switch( $_POST['action'] ) {
+	case 'unmount':
+		$admin->unmount();
+		//And the config and everything are on the usb stick. No need to show them a
+		die("USB Stick unmounted.");
+		break;
+	case 'admin':
+		if ( $_POST['pass1'] && $_POST['pass1'] == $_POST['pass2'] ) {
+			$admin->config['hash'] = password_hash($_POST['pass1'], PASSWORD_DEFAULT);
+			$message .= "<div class='message'>Password Updated</div>";
+		} elseif ( $_POST['pass1'] || $_POST['pass2'] ){
+			$message .= "<div class='message'>Passwords didn't match. The password was not updated.</div>";
+		}
+		$message .= "<div class='message'>Configuration Updated</div>";
+		$admin->update_config_from_post();
+		$admin->save_config();
+		include( 'form-admin.php' );
+		break;
 }
-include( 'form-admin.php' );
+
 
 
 class Admin {
     public $config = null;
+	private $config_dir = "/etc/biblebox/"; //always keep the trailing slash
 
     function __construct( $password ) {
         $this->get_config();
 
         //If the config file is missing, $this->config will still be null. Show setup form or run setup
-        if ( null === $this->config ) {
+        if ( ! $this->config['hash'] ) {
             if ( 'setup' == $_POST['action'] && $_POST['pass1'] && $_POST['pass1'] == $_POST['pass2'] ) {
                 //Do setup (create config variable, dump it to config file)
-                $this->config = array(
-                    'hash' => password_hash($_POST['pass1'], PASSWORD_DEFAULT ),
-                    'ssid' => $_POST['ssid'], //Needs to be sanitized somehow
-                );
-                $this->save_config();
-                $this->set_ssid( $this->config['ssid'] );
+				$this->config['hash'] = password_hash($_POST['pass1'], PASSWORD_DEFAULT );
+
+				$this->update_config_from_post();
+				$this->save_config();
+
                 header("Location: http:/setup-complete.html");
                 die();
             } else {
@@ -63,24 +80,39 @@ class Admin {
 
     }
 
+	function update_config_from_post() {
+
+		$skip_fields = array('action', 'pass1', 'pass2');
+		foreach ( $_POST as $field => $value ) {
+			if ( ! in_array( $field, $skip_fields ) ) {
+				// Not a skipped field. Add it to the config variable
+				$this->config[ $field ] = $value;
+			}
+		}
+
+	}
+
     function save_config() {
-        file_put_contents( __DIR__ . '/content/config', serialize($this->config));
+		// No sanitizing necessary. It's just being written to a text file, so no security hole really.
+		// We'll sanitize them when retrieving the config vars
+        foreach( $this->config as $k => $v ) {
+			$v = substr( $v, 0, 1000 ); // 1,000 character limit per variable, just to be sane.
+			file_put_contents( $this->config_dir . $k . '.txt', $v );
+		}
     }
 
     function get_config() {
-        if ( $configraw = file_get_contents( __DIR__ . '/content/config' ) ) {
-            $this->config = unserialize( $configraw );
-            return $this->config;
-        } else {
-            return null;
-        }
+        $dir = opendir( $this->config_dir );
+		$this->config = array();
+		while ( ( $file = strtolower( readdir($dir) ) ) !== false ) {
+			if ( '.txt' == substr($file,-4) ) {
+				$this->config[ substr($file, 0, -4) ] = file_get_contents( $this->config_dir . $file );
+			}
+		}
+		//Todo: Sanitize config vars where necessary
     }
 
     function unmount() {
         exec('./unmount-usb.sh');
-    }
-
-    function set_ssid( $ssid ) {
-        exec('./set-ssid.sh ' . $ssid);
     }
 }

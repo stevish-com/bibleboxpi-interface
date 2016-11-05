@@ -6,6 +6,9 @@
     <title>Title</title>
 </head>
 <body>
+<?php if ( $message ) {
+	echo $message;
+} ?>
 <p>Manage your settings below:</p>
 <form method="POST">
     <input type="hidden" name="action" value="admin" />
