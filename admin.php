@@ -1,15 +1,7 @@
 <?php
-//Get the config variable from the single config file
-//Config should include SSID and general options
-//Doesn't necessarily need to store homepage messages, as those will be in index.html
 $admin = new Admin( isset($_POST['pass']) ? $_POST['pass'] : false );
 
-// If the config var is empty, take them to the setup screen
-// This means deleting config resets the password and everything
-
-
-
-
+include( 'form-admin.php' );
 ?>
 
 
@@ -19,10 +11,8 @@ class Admin {
     private $config = null;
 
     function __construct( $password ) {
-        // Single = intentional
-        if ( $configraw = file_get_contents('config') ) {
-            $this->config = unserialize( $configraw );
-        }
+        $this->get_config();
+
         //If the config file is missing, $thi->config will still be null. Show setup form or run setup
         if ( null === $this->config ) {
             if ( 'setup' == $_POST['action'] ) {
@@ -64,6 +54,15 @@ class Admin {
     }
 
     function save_config() {
-        file_put_contents('config', serialize($this->config));
+        file_put_contents( __DIR__ . '/content/config', serialize($this->config));
+    }
+
+    function get_config() {
+        if ( $configraw = file_get_contents( __DIR__ . '/content/config' ) ) {
+            $this->config = unserialize( $configraw );
+            return $this->config;
+        } else {
+            return false;
+        }
     }
 }
