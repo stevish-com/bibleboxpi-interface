@@ -1,5 +1,6 @@
 <p>This BibleBox has not been set up. Please Configure it now.</p>
 <form method="POST">
+    <input type="hidden" name="action" value="setup" /> 
     <p><label for="pass1">Password:</label><br/>
         <input type="password" name="pass1" /></p>
     <p><label for="pass2">Password again:</label><br/>

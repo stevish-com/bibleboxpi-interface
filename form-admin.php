@@ -1,5 +1,6 @@
 <p>Manage your settings below:</p>
 <form method="POST">
+    <input type="hidden" name="action" value="admin" />
     <p><label for="pass1">New Password (optional):</label><br/>
         <input type="password" name="pass1" id=pass1" /></p>
     <p><label for="pass2">New Password again (optional):</label><br/>

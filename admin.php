@@ -36,5 +36,11 @@ if ( ! $config ) {
 
 function authenticate() {
     session_start();
-    
+    // Use simple session variable to validate user? Do we need to worry about session hijacking and stuff?
+    // We probably won't be working in an SSL environment (imagine getting to a real internet connection
+    // often enough to update your SSL certs. Not ideal)
+}
+
+function bbpi_hash( $in ) {
+    // Low-overhead hashing algorithm. Doesn't necessarily mean low processing power, but low dependencies.
 }
