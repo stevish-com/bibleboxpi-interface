@@ -5,7 +5,11 @@
     <title>Title</title>
 </head>
 <body>
-<p>This BibleBox has not been set up. Please Configure it now.</p>
+<?php if ( $admin->error ) {
+	echo "<div class='message'>{$admin->error}</div>";
+} else {
+	echo "<div class=''message'> This BibleBox has not been set up . Please Configure it now .</div>";
+} ?>
 <form method="POST">
     <input type="hidden" name="action" value="setup" /> 
     <p><label for="pass1">Password:</label><br/>

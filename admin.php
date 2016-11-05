@@ -1,8 +1,8 @@
 <?php
 //Authenticate and load config first.
 $admin = new Admin( isset($_POST['pass']) ? $_POST['pass'] : false );
-if ( $admin->include ) {
-	include ( $admin->include );
+if ( $admin->not_set_up ) {
+	include ( 'form-setup.php' );
 	die();
 }
 $message = '';
@@ -38,7 +38,8 @@ if ( isset( $_POST['action'] ) ) {
 class Admin {
     public $config = null;
 	private $config_dir = "/var/www/html/biblebox/config/"; //always keep the trailing slash
-	public $include = false;
+	public $not_set_up = true;
+	public $error = false;
 
     function __construct( $password ) {
         $this->get_config();
@@ -54,11 +55,13 @@ class Admin {
 
                 header("Location: http:/setup-complete.html");
                 die();
-            } else {
-                //Todo: Add errors for no password or passwords don't match
-                $this->include = 'form-setup.php';
-            }
+            } elseif ( 'setup' == $_POST['action'] && $_POST['pass1'] != $_POST['pass2'] ) {
+                $this->error = "Passwords did not match";
+            } elseif ( 'setup' == $_POST['action'] ) {
+				$this->error = "You must set up a password";
+			}
         } else {
+			$this->not_set_up = false;
             // There is a config file. So authenticate the user.
             $this->authenticate( $password );
         }
