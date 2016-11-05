@@ -37,10 +37,9 @@ class Admin {
         }
     }
     function authenticate($pass = false) {
-        global $config;
         if ($pass) {
-            if (password_hash($pass, PASSWORD_DEFAULT) == $config['hash']) {
-                $config['token'] = $_SESSION['token'] = uniqid();
+            if (password_hash($pass, PASSWORD_DEFAULT) == $this->config['hash']) {
+                $this->config['token'] = $_SESSION['token'] = uniqid();
                 $this->save_config();
                 return true;
             } else {
@@ -53,7 +52,7 @@ class Admin {
             // Use simple session variable to validate user? Do we need to worry about session hijacking and stuff?
             // We probably won't be working in an SSL environment (imagine getting to a real internet connection
             // often enough to update your SSL certs. Not ideal)
-            if ($_SESSION['token'] == $config['token']) {
+            if ($_SESSION['token'] == $this->config['token']) {
                 return true;
             } else {
                 // They're not trying to log in or anything. They're simply not logged in. Send them to login.
@@ -65,7 +64,6 @@ class Admin {
     }
 
     function save_config() {
-        global $config;
-        file_put_contents('config', serialize($config));
+        file_put_contents('config', serialize($this->config));
     }
 }
