@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Simple Login Page (No PHP yet!-->
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
 <p>Manage your settings below:</p>
 <form method="POST">
     <input type="hidden" name="action" value="admin" />
@@ -9,3 +17,5 @@
         <input type="text" name="ssid" /></p>
     <input type="submit" value="Run Setup" />
 </form>
+</body>
+</html>
