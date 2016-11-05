@@ -12,8 +12,15 @@ class Admin {
 
         //If the config file is missing, $this->config will still be null. Show setup form or run setup
         if ( null === $this->config ) {
-            if ( 'setup' == $_POST['action'] ) {
+            if ( 'setup' == $_POST['action'] && $_POST['pass1'] && $_POST['pass1'] == $_POST['pass2'] ) {
                 //Do setup (create config variable, dump it to config file)
+                $this->config = array(
+                    'hash' => password_hash($_POST['pass1'], PASSWORD_DEFAULT ),
+                    'ssid' => $_POST['ssid'], //Needs to be sanitized somehow
+                );
+                $this->save_config();
+                header("Location: http:/setup-complete.html");
+                die();
             } else {
                 include( 'form-setup.php' );
                 die();
