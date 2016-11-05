@@ -37,11 +37,25 @@ if ( isset( $_POST['action'] ) ) {
 
 class Admin {
     public $config = null;
-	private $config_dir = "/var/www/html/biblebox/config/"; //always keep the trailing slash
+	private $config_dirs = array( // use trailing slashes
+		"/media/usb0/config/", // usb config
+		"/media/usb0/Config/", // usb config
+		"/etc/biblebox/" // default config
+	);
+	private $config_dir = null;
 	public $not_set_up = true;
 	public $error = false;
 
     function __construct( $password ) {
+		foreach($this->config_dirs as $dir) {
+			if ( is_dir($dir) ) {
+				$this->config_dir = $dir;
+				break;
+			}
+		}
+		if ( ! $this->config_dir ) {
+			die("Config dir not found!");
+		}
         $this->get_config();
 
         //If the config file is missing, $this->config will still be null. Show setup form or run setup
@@ -53,7 +67,7 @@ class Admin {
 				$this->update_config_from_post();
 				$this->save_config();
 
-                header("Location: http:/setup-complete.html");
+                header("Location: http:/admin/setup-complete.html");
                 die();
             } elseif ( 'setup' == $_POST['action'] && $_POST['pass1'] != $_POST['pass2'] ) {
                 $this->error = "Passwords did not match";
@@ -69,12 +83,16 @@ class Admin {
     function authenticate($pass = false) {
 		session_start();
         if ($pass) {
+			if ( $this->too_many_failures() ) {
+				die("Too Many Password Attempts. Wait a bit, go back and try again.");
+			}
             if ( password_verify($pass, $this->config['hash']) ) {
                 $this->config['token'] = $_SESSION['token'] = uniqid();
                 $this->save_config();
                 return true;
             } else {
                 // They passed a password that's wrong. Send them to login-fail
+				$this->config['login-fails'] .= time() . "\n";
                 header('Location: http:/login-fail.html?entered=');
                 die();
             }
@@ -137,5 +155,34 @@ class Admin {
 		$this->save_config();
 		unset($_SESSION['token']);
 		session_destroy();
+	}
+
+	function too_many_failures() {
+		$now = time();
+		$fails = explode("\n", $this->config['login-fails']);
+		$fails_day = $fails_hour = $fails_minute = $fails_5_seconds = 0;
+		foreach( $fails as $k => $fail ) {
+			if ( $fail < $now - 86400 ) {
+				unset( $fails[$k] );
+				continue;
+			}
+			$fails_day ++;
+			if ( $fail > $now - 5 ) {
+				$fails_5_seconds++;
+			} elseif ( $fail > $now - 60 ) {
+				$fails_minute++;
+				$fails_5_seconds++;
+			} elseif ( $fail > $now - 3600 ) {
+				$fails_hour++;
+				$fails_minute++;
+				$fails_5_seconds++;
+			}
+		}
+		$this->config['login-fails'] = implode( "\n", $fails );
+		$this->save_config();
+		if ( $fails_day > 100 || $fails_hour > 30 || $fails_minute > 5 || $fails_5_seconds > 0 ) {
+			return true;
+		}
+		return false;
 	}
 }
