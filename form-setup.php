@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Simple Login Page (No PHP yet!-->
 <head>
     <meta charset="UTF-8">
     <title>Title</title>

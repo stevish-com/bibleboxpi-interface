@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Simple Login Page (No PHP yet!-->
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -8,7 +7,9 @@
 <body>
 <?php if ( $message ) {
 	echo $message;
-} ?>
+}
+?>
+
 <p>Manage your settings below:</p>
 <form method="POST">
     <input type="hidden" name="action" value="admin" />
@@ -29,8 +30,12 @@
     <input type="submit" value="Update" />
 </form>
 <form method="POST">
-    <input type="hidden" name="action" value="unmount" />
-    <input type="submit" value="Unmount USB Drive" />
+	<input type="hidden" name="action" value="unmount" />
+	<input type="submit" value="Unmount USB Drive" />
+</form>
+<form method="POST">
+	<input type="hidden" name="action" value="logout" />
+	<input type="submit" value="Log Out" />
 </form>
 </body>
 </html>
