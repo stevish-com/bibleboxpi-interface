@@ -2,18 +2,15 @@
 $admin = new Admin( isset($_POST['pass']) ? $_POST['pass'] : false );
 
 include( 'form-admin.php' );
-?>
 
 
-
-<?php
 class Admin {
     private $config = null;
 
     function __construct( $password ) {
         $this->get_config();
 
-        //If the config file is missing, $thi->config will still be null. Show setup form or run setup
+        //If the config file is missing, $this->config will still be null. Show setup form or run setup
         if ( null === $this->config ) {
             if ( 'setup' == $_POST['action'] ) {
                 //Do setup (create config variable, dump it to config file)
@@ -62,7 +59,7 @@ class Admin {
             $this->config = unserialize( $configraw );
             return $this->config;
         } else {
-            return false;
+            return null;
         }
     }
 }
