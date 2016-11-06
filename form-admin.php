@@ -29,10 +29,10 @@
 		<input type="text" name="system_hostname" id="system_hostname" value="<?php echo $admin->config['system_hostname']; ?>" /></p>
     <input type="submit" value="Update" />
 </form>
-<form method="POST">
+<!--<form method="POST">
 	<input type="hidden" name="action" value="unmount" />
 	<input type="submit" value="Unmount USB Drive" />
-</form>
+</form>-->
 <form method="POST">
 	<input type="hidden" name="action" value="logout" />
 	<input type="submit" value="Log Out" />

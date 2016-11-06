@@ -10,7 +10,11 @@ $message = '';
 if ( isset( $_POST['action'] ) ) {
 	switch ($_POST['action']) {
 		case 'unmount':
-			$admin->unmount();
+			if ( $result = $admin->unmount() ) {
+				$message = "There was an error (#$result). The USB Stick was not dismounted. You'll need to turn off the BibleBox and then remove the USB stick";
+				include('form-admin.php');
+				die();
+			}
 			//And the config and everything are on the usb stick. No need to show them the admin form again.
 			die("USB Stick unmounted.");
 			break;
@@ -147,7 +151,8 @@ class Admin {
     }
 
     function unmount() {
-        exec('sudo umount /media/usb0');
+        exec('sudo -u www-data pumount /media/usb0', $return_text, $result_int);
+		return $result_int;
     }
 
 	function logout() {
