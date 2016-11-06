@@ -40,7 +40,8 @@ class Admin {
 	private $config_dirs = array( // use trailing slashes
 		"/media/usb0/config/", // usb config
 		"/media/usb0/Config/", // usb config
-		"/etc/biblebox/" // default config
+		"/etc/biblebox/", // default config
+		"/var/www/biblebox/biblebox_default/config/",
 	);
 	private $config_dir = null;
 	public $not_set_up = true;
