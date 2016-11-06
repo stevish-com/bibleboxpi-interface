@@ -40,8 +40,7 @@ class Admin {
 	private $config_dirs = array( // use trailing slashes
 		"/media/usb0/config/", // usb config
 		"/media/usb0/Config/", // usb config
-		"/etc/biblebox/", // default config
-		"/var/www/biblebox/biblebox_default/config/",
+		"/etc/biblebox/" // default config
 	);
 	private $config_dir = null;
 	public $not_set_up = true;
@@ -148,7 +147,7 @@ class Admin {
     }
 
     function unmount() {
-        exec('sudo pumount /media/usb0');
+        exec('sudo umount /media/usb0');
     }
 
 	function logout() {
