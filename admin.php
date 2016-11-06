@@ -67,7 +67,7 @@ class Admin {
 				$this->update_config_from_post();
 				$this->save_config();
 
-                header("Location: http:/admin/setup-complete.html");
+                header("Location: setup-complete.html");
                 die();
             } elseif ( 'setup' == $_POST['action'] && $_POST['pass1'] != $_POST['pass2'] ) {
                 $this->error = "Passwords did not match";
@@ -93,7 +93,7 @@ class Admin {
             } else {
                 // They passed a password that's wrong. Send them to login-fail
 				$this->config['login-fails'] .= time() . "\n";
-                header('Location: http:/login-fail.html?entered=');
+                header('Location: login-fail.html?entered=');
                 die();
             }
         } else {
@@ -104,7 +104,7 @@ class Admin {
                 return true;
             } else {
                 // They're not trying to log in or anything. They're simply not logged in. Send them to login.
-                header('Location: http:/login.html');
+                header('Location: login.html');
                 die();
             }
         }
@@ -147,7 +147,7 @@ class Admin {
     }
 
     function unmount() {
-        exec('./unmount-usb.sh');
+        exec('sudo pumount /media/usb0');
     }
 
 	function logout() {
