@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>BibleBox Admin</title>
 </head>
 <body>
 <?php if ( $message ) {
@@ -33,6 +33,7 @@
 	<input type="hidden" name="action" value="unmount" />
 	<input type="submit" value="Unmount USB Drive" />
 </form>-->
+<br/><br/>
 <form method="POST">
 	<input type="hidden" name="action" value="logout" />
 	<input type="submit" value="Log Out" />

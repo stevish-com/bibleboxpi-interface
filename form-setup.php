@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>BibleBox Setup</title>
 </head>
 <body>
 <?php if ( $admin->error ) {
