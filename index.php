@@ -126,6 +126,7 @@ class Admin {
 
 	}
 
+    //TODO: write to .ini file instead of .txt files
     function save_config() {
 		// No sanitizing necessary. It's just being written to a text file, so no security hole really.
 		// We'll sanitize them when retrieving the config vars
