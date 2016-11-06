@@ -142,9 +142,12 @@ class Admin {
 		}
 		$this->config = array();
 		while ( ( $file = strtolower( readdir($dir) ) ) != false ) {
-			if ( '.txt' == substr($file,-4) ) {
-				$this->config[ substr($file, 0, -4) ] = file_get_contents( $this->config_dir . $file );
-			}
+			if ( '.ini' == substr($file,-4) ) {
+                                $settings = parse_ini_file($this->config_dir.$file);
+                                foreach ($settings as $name => $value) {
+                                        $this->config[$name] = $value;
+                                }
+                        }
 		}
 		
 		//Todo: Sanitize config vars where necessary
